@@ -17,10 +17,11 @@ sheet = client.open("Parking Pass Application (Responses)").sheet1
 # Extract and print all of the values
 list_of_hashes = sheet.get_all_records()
 
-thresholdScore = 300 #The lowest score to be able to apply for a parking pass
+thresholdScore = 250 #The lowest score to be able to apply for a parking pass
 
 def getScore(person):
     score = 0
+    parkingPass = False
     try:
         f = open("emailList.txt", "a+")
 
@@ -40,13 +41,22 @@ def getScore(person):
             score += 4 + int(person.get("If you answered yes to the previous question, how many days per week do you work?"))
         if person.get("Do you go directly to an extracurricular activity after school?").lower() == "yes" and int(person.get("If you answered yes to the previous question, how many days do you participate in extracurriculars per week?")) > 0 :  #If they participate in extracurricular activities
             score += 2 + int(person.get("If you answered yes to the previous question, how many days do you participate in extracurriculars per week?"))
-        if int(person.get("How many people would you carpool with if you receive the pass? (0 if its just you)")) > 0:  #How many people would carpool with the person answering
+        if int(person.get("How many people would you carpool with if you receive the pass? (0 if it's just you)")) > 0:  #How many people would carpool with the person answering
             score += int(person.get("How many people would you carpool with if you receive the pass? (0 if its just you)")) * 1.5
+
+        if score > thresholdScore:
+            parkingPass = True
+        else:
+            parkingPass = False
 
         f.write(person.get("Email Address") + '\n') #Adds the persons email to the email list with a new line at the end
         f.close()
 
-        return float(score)
+        scorePass = []
+        scorePass.append(score)
+        scorePass.append(parkingPass)
+        return scorePass
+
     except Exception as e:
         print("Error: " + str(e))
 
@@ -66,13 +76,26 @@ def sendEmail(subject,body,reciever):
     server.quit()
 
 while True:
-    if list_of_hashes != sheet.get_all_records(): #If there is a change in the spreadsheet
-        list_of_hashes = sheet.get_all_records()
-        print("New Response!")
-        alreadyEvaluated = open("emailList.txt","r+").readlines()
-        for x in range(len(list_of_hashes)):
-            recieve = list_of_hashes[x].get("Email Address")
-            if not (recieve in alreadyEvaluated.remove('\n')): #If the current persons email is not in the email list
-                score = getScore(list_of_hashes[x])
-                sendEmail("Parking Pass Update",str(score),recieve)
-    time.sleep(1)
+    try:
+        if list_of_hashes != sheet.get_all_records(): #If there is a change in the spreadsheet
+            list_of_hashes = sheet.get_all_records()
+            print("New Response!")
+            alreadyEvaluated = open("emailList.txt","r+").readlines()
+            for x in range(len(list_of_hashes)):
+                for email in range(len(alreadyEvaluated)):
+                    alreadyEvaluated[email] = alreadyEvaluated[email].strip("\n")
+                recieve = list_of_hashes[x].get("Email Address")
+                print(alreadyEvaluated)
+                if recieve not in alreadyEvaluated: #If the current persons email is not in the email list
+                    scorePass = getScore(list_of_hashes[x])
+                    parkingPass = scorePass[1]
+                    score = scorePass[0]
+                    if parkingPass == True:
+                        body = "You are eligible for a parking pass. SCORE: " + str(score)  #Email for if you are eligible
+                    else:
+                        body = "You are not eligible for a parking pass. SCORE: " + str(score) #Email for if you are not eligible
+
+                    sendEmail("Parking Pass Update",body,recieve)
+    except Exception as e:
+        print("Error: " + str(e))
+    time.sleep(30)
