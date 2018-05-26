@@ -17,7 +17,7 @@ sheet = client.open("Parking Pass Application (Responses)").sheet1
 # Extract and print all of the values
 list_of_hashes = sheet.get_all_records()
 
-thresholdScore = 250 #The lowest score to be able to apply for a parking pass
+thresholdScore = 100 #The lowest score to be able to apply for a parking pass
 
 def getScore(person):
     score = 0
@@ -77,6 +77,13 @@ def sendEmail(subject,body,reciever):
     server.sendmail("parkingpassadmin",msg['To'],msg.as_string())
     server.quit()
 
+
+def stripNewLineFromList(List):
+    for x in range(len(List)):
+        List[x] = List[x].strip("\n")
+    return List
+
+
 while True:
     try:
         if list_of_hashes != sheet.get_all_records(): #If there is a change in the spreadsheet
@@ -84,10 +91,9 @@ while True:
             print("New Response!")
             alreadyEvaluated = open("emailList.txt","r+").readlines()
             for x in range(len(list_of_hashes)):
-                for email in range(len(alreadyEvaluated)):
-                    alreadyEvaluated[email] = alreadyEvaluated[email].strip("\n")
-                recieve = list_of_hashes[x].get("Email Address")
-                print(alreadyEvaluated)
+                alreadyEvaluated = stripNewLineFromList(alreadyEvaluated)
+                recieve = list_of_hashes[x].get("Email Address") #Gets current persons email address
+                print("Already Evaluated: " + str(alreadyEvaluated))
                 if recieve not in alreadyEvaluated: #If the current persons email is not in the email list
                     scorePass = getScore(list_of_hashes[x])
                     parkingPass = scorePass[1]
@@ -98,8 +104,10 @@ while True:
                         body = "You are not eligible for a parking pass. SCORE: " + str(score) #Email for if you are not eligible
 
                     sendEmail("Parking Pass Update",body,recieve)
+
     except Exception as e:
         print("Error: " + str(e))
         if "nonetype" in str(e).lower():
             print("Maybe the text for one of the questions was changed?")
+
     time.sleep(1)
