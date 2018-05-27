@@ -110,4 +110,4 @@ while True:
         if "nonetype" in str(e).lower():
             print("Maybe the text for one of the questions was changed?")
 
-    time.sleep(1)
+    time.sleep(30)
