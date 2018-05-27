@@ -42,7 +42,7 @@ def getScore(person):
         if person.get("Do you go directly to an extracurricular activity after school?").lower() == "yes" and int(person.get("If you answered yes to the previous question, how many days do you participate in extracurriculars per week?")) > 0 :  #If they participate in extracurricular activities
             score += 2 + int(person.get("If you answered yes to the previous question, how many days do you participate in extracurriculars per week?"))
         if int(person.get("How many people would you carpool with if you receive the pass? (0 if it's just you)")) > 0:  #How many people would carpool with the person answering
-            score += int(person.get("How many people would you carpool with if you receive the pass? (0 if it's just you)")) * 1.5
+            score += int(person.get("How many people would you carpool with if you receive the pass? (0 if it's just you)")) * 10
 
         if score > thresholdScore:
             parkingPass = True
@@ -110,4 +110,4 @@ while True:
         if "nonetype" in str(e).lower():
             print("Maybe the text for one of the questions was changed?")
 
-    time.sleep(1)
+    time.sleep(30)
