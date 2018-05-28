@@ -17,7 +17,7 @@ sheet = client.open("Parking Pass Application (Responses)").sheet1
 # Extract and print all of the values
 list_of_hashes = sheet.get_all_records()
 
-thresholdScore = 250 #The lowest score to be able to apply for a parking pass
+thresholdScore = 200 #The lowest score to be able to apply for a parking pass
 
 def getScore(person):
     score = 0
@@ -49,7 +49,7 @@ def getScore(person):
         else:
             parkingPass = False
 
-        f.write(person.get("Email Address") + '\n') #Adds the persons email to the email list with a new line at the end
+        f.write(person.get("What is your full name?") + "," + person.get("Email Address") + '\n') #Adds the persons email to the email list with a new line at the end
         f.close()
 
         scorePass = []
@@ -77,6 +77,9 @@ def sendEmail(subject,body,reciever):
     server.sendmail("parkingpassadmin",msg['To'],msg.as_string())
     server.quit()
 
+def addPerson(person):
+    f = open("eligibleList.txt","a+")
+    f.write(person.get("What is your full name?") + "," + person.get("Email Address") + '\n')
 while True:
     try:
         if list_of_hashes != sheet.get_all_records(): #If there is a change in the spreadsheet
@@ -84,6 +87,7 @@ while True:
             print("New Response!")
             alreadyEvaluated = open("emailList.txt","r+").readlines()
             for x in range(len(list_of_hashes)):
+                eligible = False
                 for email in range(len(alreadyEvaluated)):
                     alreadyEvaluated[email] = alreadyEvaluated[email].strip("\n")
                 recieve = list_of_hashes[x].get("Email Address")
@@ -94,12 +98,14 @@ while True:
                     score = scorePass[0]
                     if parkingPass == True:
                         body = "You are eligible for a parking pass. SCORE: " + str(score)  #Email for if you are eligible
+                        eligible = True
+                        addPerson(list_of_hashes[x])
                     else:
                         body = "You are not eligible for a parking pass. SCORE: " + str(score) #Email for if you are not eligible
-
+                        eligible = False
                     sendEmail("Parking Pass Update",body,recieve)
     except Exception as e:
         print("Error: " + str(e))
         if "nonetype" in str(e).lower():
             print("Maybe the text for one of the questions was changed?")
-    time.sleep(1)
+    time.sleep(30)
