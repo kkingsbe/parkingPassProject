@@ -17,7 +17,7 @@ sheet = client.open("Parking Pass Application (Responses)").sheet1
 # Extract and print all of the values
 list_of_hashes = sheet.get_all_records()
 
-thresholdScore = 200 #The lowest score to be able to apply for a parking pass
+#thresholdScore = 200 #The lowest score to be able to apply for a parking pass
 
 def getScore(person):
     score = 0
@@ -31,6 +31,7 @@ def getScore(person):
             score += 2
         if person.get("Are you in a dual enrollment program at Montgomery College?").lower() == "yes": #100 points if dual enrolled
             score += 100
+            parkingPass = True
         if person.get("Are you an elected SGA official?").lower() == "yes": #100 points if SGA official
             score += 100
         if person.get("Are you the captain of a varsity team that is CURRENTLY in season?").lower() == "yes": #100 points if varsity captian
@@ -39,28 +40,22 @@ def getScore(person):
             score += int(person.get('If you answered "NO" to the previous question, approximately how long does it typically take you to get to school, in minutes? Please enter a number.')) * 10
         if person.get("Do you go DIRECTLY to a job after school?").lower() == "yes" and int(person.get("If you answered yes to the previous question, how many days per week do you work?")) <= 7:  #If they work after school
             score += 4 + int(person.get("If you answered yes to the previous question, how many days per week do you work?"))
-        if person.get("Do you go directly to an extracurricular activity after school?").lower() == "yes" and int(person.get("If you answered yes to the previous question, how many days do you participate in extracurriculars per week?")) > 0 :  #If they participate in extracurricular activities
-            score += 2 + int(person.get("If you answered yes to the previous question, how many days do you participate in extracurriculars per week?"))
+        if person.get("Do you go DIRECTLY to an extracurricular activity/club after school?").lower() == "yes" and int(person.get("If you answered yes to the previous question, how many days do you participate in extracurriculars in a school week?")) > 0 :  #If they participate in extracurricular activities
+            score += 2 + int(person.get("If you answered yes to the previous question, how many days do you participate in extracurriculars in a school week?"))
         if int(person.get("How many people would you carpool with if you receive the pass? (0 if it's just you)")) > 0:  #How many people would carpool with the person answering
             score += int(person.get("How many people would you carpool with if you receive the pass? (0 if it's just you)")) * 1.5
 
-        if score > thresholdScore:
-            parkingPass = True
-        else:
-            parkingPass = False
-
-        f.write(person.get("What is your full name?") + "," + person.get("Email Address") + '\n') #Adds the persons email to the email list with a new line at the end
+        f.write(person.get("Enter your first and last name below:") + "," + person.get("Email Address") + '\n') #Adds the persons email to the email list with a new line at the end
         f.close()
 
-        scorePass = []
-        scorePass.append(score)
-        scorePass.append(parkingPass)
-        return scorePass
+        return score,parkingPass
+
 
     except Exception as e:
         print("Error: " + str(e))
         if "nonetype" in str(e).lower():
             print("Maybe the text for one of the questions was changed?")
+
 
 def sendEmail(subject,body,reciever):
     msg = MIMEMultipart()
@@ -79,7 +74,8 @@ def sendEmail(subject,body,reciever):
 
 def addPerson(person):
     f = open("eligibleList.txt","a+")
-    f.write(person.get("What is your full name?") + "," + person.get("Email Address") + '\n')
+    f.write(person.get("Enter your first and last name below:") + "," + person.get("Email Address") + "," + str(score) + "," + str(Pass) + '\n')
+
 while True:
     try:
         if list_of_hashes != sheet.get_all_records(): #If there is a change in the spreadsheet
@@ -94,18 +90,14 @@ while True:
                 print(alreadyEvaluated)
                 if recieve not in alreadyEvaluated: #If the current persons email is not in the email list
                     scorePass = getScore(list_of_hashes[x])
-                    parkingPass = scorePass[1]
                     score = scorePass[0]
-                    if parkingPass == True:
-                        body = "You are eligible for a parking pass. SCORE: " + str(score)  #Email for if you are eligible
-                        eligible = True
-                        addPerson(list_of_hashes[x])
-                    else:
-                        body = "You are not eligible for a parking pass. SCORE: " + str(score) #Email for if you are not eligible
-                        eligible = False
-                    sendEmail("Parking Pass Update",body,recieve)
+                    Pass = scorePass[1]
+
+                addPerson(list_of_hashes[x])
+
     except Exception as e:
         print("Error: " + str(e))
         if "nonetype" in str(e).lower():
             print("Maybe the text for one of the questions was changed?")
+
     time.sleep(30)
