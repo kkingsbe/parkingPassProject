@@ -15,6 +15,8 @@ def getScore(person):
 
         if person.get("What grade are you currently in?") == "11": #1 point if grade 11
             score += 1
+        if person.get("Are you currently in B-CC's internship program AND have demonstrated need for a parking pass? (Demonstrated need = internship is located far away and is not easily accessible by public transportation)").lower() == "yes": #30 points if intern
+            score += 30
         if person.get("What grade are you currently in?") == "12": #2 points if grade 12
             score += 2
         if person.get("Are you in a dual enrollment program at Montgomery College?").lower() == "yes": #100 points if dual enrolled
