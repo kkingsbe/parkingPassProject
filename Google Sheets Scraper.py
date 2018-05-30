@@ -3,21 +3,9 @@ from oauth2client.service_account import ServiceAccountCredentials
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib,time
+addToSheet = __import__("addToSheet")
+sendList = __import__("sendList")
 
-# use creds to create a client to interact with the Google Drive API
-scope = ['https://spreadsheets.google.com/feeds',
-         'https://www.googleapis.com/auth/drive']
-creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
-client = gspread.authorize(creds)
-
-# Find a workbook by name and open the first sheet
-# Make sure you use the right name here.
-sheet = client.open("Parking Pass Application (Responses)").sheet1
-
-# Extract and print all of the values
-list_of_hashes = sheet.get_all_records()
-
-#thresholdScore = 200 #The lowest score to be able to apply for a parking pass
 
 def getScore(person):
     score = 0
@@ -72,32 +60,53 @@ def sendEmail(subject,body,reciever):
     server.sendmail("parkingpassadmin",msg['To'],msg.as_string())
     server.quit()
 
-def addPerson(person):
-    f = open("eligibleList.txt","a+")
-    f.write(person.get("Enter your first and last name below:") + "," + person.get("Email Address") + "," + str(score) + "," + str(Pass) + '\n')
+def addPerson(person,score,Pass):
+    name = person.get("Enter your first and last name below:")
+    email = person.get("Email Address")
+    addToSheet.addToNextRow(name,email,score,Pass)
 
-while True:
-    try:
-        if list_of_hashes != sheet.get_all_records(): #If there is a change in the spreadsheet
-            list_of_hashes = sheet.get_all_records()
-            print("New Response!")
-            alreadyEvaluated = open("emailList.txt","r+").readlines()
-            for x in range(len(list_of_hashes)):
-                eligible = False
-                for email in range(len(alreadyEvaluated)):
-                    alreadyEvaluated[email] = alreadyEvaluated[email].strip("\n")
-                recieve = list_of_hashes[x].get("Email Address")
-                print(alreadyEvaluated)
-                if recieve not in alreadyEvaluated: #If the current persons email is not in the email list
-                    scorePass = getScore(list_of_hashes[x])
-                    score = scorePass[0]
-                    Pass = scorePass[1]
+def main():
 
-                addPerson(list_of_hashes[x])
+    # use creds to create a client to interact with the Google Drive API
+    scope = ['https://spreadsheets.google.com/feeds',
+             'https://www.googleapis.com/auth/drive']
+    creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
+    client = gspread.authorize(creds)
 
-    except Exception as e:
-        print("Error: " + str(e))
-        if "nonetype" in str(e).lower():
-            print("Maybe the text for one of the questions was changed?")
+    # Find a workbook by name and open the first sheet
+    # Make sure you use the right name here.
+    sheet = client.open("Parking Pass Application (Responses)").sheet1
 
-    time.sleep(1)
+    # Extract and print all of the values
+    list_of_hashes = sheet.get_all_records()
+
+    maxResponses = 2  # Maximum number of responses
+    # thresholdScore = 200 #The lowest score to be able to apply for a parking pass
+
+    listLen = sendList.getLen()
+    while listLen < maxResponses - 1:
+        try:
+            if list_of_hashes != sheet.get_all_records(): #If there is a change in the spreadsheet
+                list_of_hashes = sheet.get_all_records()
+                print("New Response!")
+                alreadyEvaluated = open("emailList.txt","r+").readlines()
+                for x in range(len(list_of_hashes)):
+                    for email in range(len(alreadyEvaluated)):
+                        alreadyEvaluated[email] = alreadyEvaluated[email].strip("\n")
+                    recieve = list_of_hashes[x].get("Email Address")
+                    print(alreadyEvaluated)
+                    if recieve not in alreadyEvaluated: #If the current persons email is not in the email list
+                        scorePass = getScore(list_of_hashes[x])
+                        score = scorePass[0]
+                        Pass = scorePass[1]
+                        listLen = sendList.getLen()
+                        addPerson(list_of_hashes[x],score,Pass)
+
+
+        except Exception as e:
+            print("Error: " + str(e))
+            if "nonetype" in str(e).lower():
+                print("Maybe the text for one of the questions was changed?")
+
+        time.sleep(1)
+    sendList.main()
