@@ -33,9 +33,9 @@ def getScore(person):
             score += 100
             parkingPass = True
         if person.get("Are you an elected SGA official?").lower() == "yes": #100 points if SGA official
-            score += 100
+            score += 10
         if person.get("Are you the captain of a varsity team that is CURRENTLY in season?").lower() == "yes": #100 points if varsity captian
-            score += 100
+            score += 10
         if person.get("Is there currently a school bus route in your neighborhood that you can take to school?").lower() == "no" and int(person.get('If you answered "NO" to the previous question, approximately how long does it typically take you to get to school, in minutes? Please enter a number.')) > 0: #If no bus services the neighborhood
             score += int(person.get('If you answered "NO" to the previous question, approximately how long does it typically take you to get to school, in minutes? Please enter a number.')) * 10
         if person.get("Do you go DIRECTLY to a job after school?").lower() == "yes" and int(person.get("If you answered yes to the previous question, how many days per week do you work?")) <= 7:  #If they work after school
@@ -100,4 +100,4 @@ while True:
         if "nonetype" in str(e).lower():
             print("Maybe the text for one of the questions was changed?")
 
-    time.sleep(30)
+    time.sleep(1)
