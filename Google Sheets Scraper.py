@@ -3,6 +3,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib,time
+import datetime as DT
 addToSheet = __import__("addToSheet")
 sendList = __import__("sendList")
 
@@ -63,7 +64,6 @@ def addPerson(person,score,Pass):
     addToSheet.addToNextRow(name,email,score,Pass)
 
 def main():
-
     # use creds to create a client to interact with the Google Drive API
     scope = ['https://spreadsheets.google.com/feeds',
              'https://www.googleapis.com/auth/drive']
@@ -77,11 +77,16 @@ def main():
     # Extract and print all of the values
     list_of_hashes = sheet.get_all_records()
 
-    maxResponses = 10  # Maximum number of responses
+    #maxResponses = 10  # Maximum number of responses
+    daysToRun = 7 #Days for program to accept new responses
+
+    endDate = DT.datetime.now().timetuple().tm_yday + daysToRun
+
+    secondsToRun = daysToRun * 24 * 60 * 60
     # thresholdScore = 200 #The lowest score to be able to apply for a parking pass
 
     listLen = sendList.getLen()
-    while listLen < maxResponses - 1:
+    while DT.datetime.now().timetuple().tm_yday <= endDate:
         try:
             if list_of_hashes != sheet.get_all_records(): #If there is a change in the spreadsheet
                 list_of_hashes = sheet.get_all_records()
@@ -104,5 +109,5 @@ def main():
             if "nonetype" in str(e).lower():
                 print("Maybe the text for one of the questions was changed?")
 
-        time.sleep(1)
+        time.sleep(30)
     sendList.main()
