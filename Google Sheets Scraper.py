@@ -6,7 +6,6 @@ import smtplib,time
 addToSheet = __import__("addToSheet")
 sendList = __import__("sendList")
 
-
 def getScore(person):
     score = 0
     parkingPass = False
@@ -38,12 +37,10 @@ def getScore(person):
 
         return score,parkingPass
 
-
     except Exception as e:
         print("Error: " + str(e))
         if "nonetype" in str(e).lower():
             print("Maybe the text for one of the questions was changed?")
-
 
 def sendEmail(subject,body,reciever):
     msg = MIMEMultipart()
@@ -80,7 +77,7 @@ def main():
     # Extract and print all of the values
     list_of_hashes = sheet.get_all_records()
 
-    maxResponses = 2  # Maximum number of responses
+    maxResponses = 10  # Maximum number of responses
     # thresholdScore = 200 #The lowest score to be able to apply for a parking pass
 
     listLen = sendList.getLen()
@@ -94,14 +91,13 @@ def main():
                     for email in range(len(alreadyEvaluated)):
                         alreadyEvaluated[email] = alreadyEvaluated[email].strip("\n")
                     recieve = list_of_hashes[x].get("Email Address")
-                    print(alreadyEvaluated)
-                    if recieve not in alreadyEvaluated: #If the current persons email is not in the email list
+                    print("Already added: " + str(alreadyEvaluated))
+                    if recieve not in str(alreadyEvaluated): #If the current persons email is not in the email list
                         scorePass = getScore(list_of_hashes[x])
                         score = scorePass[0]
                         Pass = scorePass[1]
                         listLen = sendList.getLen()
                         addPerson(list_of_hashes[x],score,Pass)
-
 
         except Exception as e:
             print("Error: " + str(e))
