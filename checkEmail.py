@@ -1,13 +1,3 @@
-#!/usr/bin/env python
-#
-# Very basic example of using Python 3 and IMAP to iterate over emails in a
-# gmail folder/label.  This code is released into the public domain.
-#
-# This script is example code from this blog post:
-# http://www.voidynullness.net/blog/2013/07/25/gmail-email-with-python-via-imap/
-#
-# This is an updated version of the original -- modified to work with Python 3.4.
-#
 import sys
 import imaplib
 import email
@@ -15,11 +5,8 @@ import email.header
 import time
 import json
 
-startMsg = "start program"
-endMsg = "get results"
-M = imaplib.IMAP4_SSL('imap.gmail.com')
-
 def init():
+    M = imaplib.IMAP4_SSL('imap.gmail.com')
     with open("gmailCreds.json") as f:
         creds = json.load(f)
 
@@ -32,14 +19,9 @@ def init():
 
     EMAIL_FOLDER = "INBOX"
 
-    main(EMAIL_ACCOUNT,PASSWORD,EMAIL_FOLDER)
+    main(EMAIL_ACCOUNT,PASSWORD,EMAIL_FOLDER,M)
 
 def process_mailbox(M):
-    """
-    Do something with emails messages in the folder.
-    For the sake of this example, print some headers.
-    """
-
     rv, data = M.search(None, "ALL")
     if rv != 'OK':
         print("No messages found!")
@@ -54,21 +36,23 @@ def process_mailbox(M):
         msg = email.message_from_bytes(data[0][1])
         hdr = email.header.make_header(email.header.decode_header(msg['Subject']))
         subject = str(hdr)
-        print('Message %s: %s' % (num, subject))
-        #print(msg)
-        parseEmail(msg,subject)
+        #print('Message %s: %s' % (num, subject))
+        parseEmail(msg,subject,M)
 
-def parseEmail(msg,subject):
+def parseEmail(msg,subject,M):
     if str(subject).lower() == "program" and "start program" in str(msg).lower():
+        print("Subject: " + str(subject))
+        print("Body: " + str(msg))
         print("Starting program...")
+        M.store('1:*', '+X-GM-LABELS', '\\Trash')
+        M.expunge()
         M.logout()
-        #M.close()
         reset = __import__("reset")
         reset.main()
         mainProgram = __import__("main")
         mainProgram.main()
 
-def main(EMAIL_ACCOUNT,PASSWORD,EMAIL_FOLDER):
+def main(EMAIL_ACCOUNT,PASSWORD,EMAIL_FOLDER,M):
     try:
         rv, data = M.login(EMAIL_ACCOUNT, PASSWORD)
     except imaplib.IMAP4.error:
@@ -76,13 +60,9 @@ def main(EMAIL_ACCOUNT,PASSWORD,EMAIL_FOLDER):
         sys.exit(1)
 
     while True:
-        rv, mailboxes = M.list()
-        if rv == 'OK':
-            print("Mailboxes:")
-            print(mailboxes)
         rv, data = M.select(EMAIL_FOLDER)
         if rv == 'OK':
-            print("Processing mailbox...\n")
+            #print("Processing mailbox...\n")
             process_mailbox(M)
 
         else:

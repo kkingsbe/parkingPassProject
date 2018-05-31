@@ -64,6 +64,7 @@ def addPerson(person,score,Pass):
     addToSheet.addToNextRow(name,email,score,Pass)
 
 def main():
+    print("Program started successfully")
     # use creds to create a client to interact with the Google Drive API
     scope = ['https://spreadsheets.google.com/feeds',
              'https://www.googleapis.com/auth/drive']
