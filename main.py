@@ -1,4 +1,4 @@
 def main():
-    googleSheetsScraper = __import__("Google Sheets Scraper")
-    googleSheetsScraper.main()
+    checkEmail = __import__("checkEmail")
+    checkEmail.init()
 main()

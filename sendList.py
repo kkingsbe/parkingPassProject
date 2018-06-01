@@ -35,6 +35,9 @@ def getLen():
     return len(list_of_hashes)
 
 def main():
+    sortSheet = __import__("sortSheet")
+    sortSheet.main()
+
     scope = ['https://spreadsheets.google.com/feeds',
              'https://www.googleapis.com/auth/drive']
     creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
@@ -48,9 +51,12 @@ def main():
 
     namesList = []
     body = "<p>" #Initializes body as empty string
+    body += "<h3> Below are the top 75 parking pass applicants: </h3> <br />"
+
     for row in list_of_hashes:
-        nameDict = {"name" : row.get("Full Name"), "email" : row.get("Email Address"), "score" : row.get("Score"), "Pass" : row.get("Pass")}
-        namesList.append(nameDict)
+        if list_of_hashes.index(row) <= 75:
+            nameDict = {"name" : row.get("Full Name"), "email" : row.get("Email Address"), "score" : row.get("Score"), "Pass" : row.get("Pass")}
+            namesList.append(nameDict)
 
     for name in namesList:
         body += name.get("name")
