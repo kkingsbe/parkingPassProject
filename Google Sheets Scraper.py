@@ -28,20 +28,17 @@ def main():
     list_of_hashes = sheet.get_all_records()
 
     # maxResponses = 10  # Maximum number of responses
-    '''
-    daysToRun = 7 #Days for program to accept new responses
-
-    endDate = DT.datetime.now().timetuple().tm_yday + daysToRun
-    '''
     
-    '''secondsToRun = daysToRun * 24 * 60 * 60'''
+    daysToRun = 7 #Days for program to accept new responses 
+    
+    secondsToRun = daysToRun * 24 * 60 * 60
+    
     # thresholdScore = 200 #The lowest score to be able to apply for a parking pass
     secondsToRun = 60 * 5
     startTime = time.time()
     endTime = startTime + secondsToRun
     listLen = sendList.getLen()
 
-    # while DT.datetime.now().timetuple().tm_yday <= endDate:
     while time.time() < endTime:
         try:
             if list_of_hashes != sheet.get_all_records():  # If there is a change in the spreadsheet
