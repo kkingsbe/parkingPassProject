@@ -49,8 +49,9 @@ def parseEmail(msg,subject,M):
         M.logout()
         reset = __import__("reset")
         reset.main()
-        mainProgram = __import__("main")
-        mainProgram.main()
+
+        googleSheetsScraper = __import__("Google Sheets Scraper")
+        googleSheetsScraper.main()
 
 def main(EMAIL_ACCOUNT,PASSWORD,EMAIL_FOLDER,M):
     try:
@@ -69,5 +70,3 @@ def main(EMAIL_ACCOUNT,PASSWORD,EMAIL_FOLDER,M):
             print("ERROR: Unable to open mailbox ", rv)
 
         time.sleep(1)
-
-init()

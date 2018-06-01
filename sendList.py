@@ -68,4 +68,3 @@ def main():
     reciever = "kkingsbe@gmail.com" #Email of reciever
 
     sendEmail("Your list of top 75 parking pass applicants is complete",body,reciever)
-main()
