@@ -65,7 +65,6 @@ def main():
             if "nonetype" in str(e).lower():
                 print("Maybe the text for one of the questions was changed?")
 
-
         time.sleep(1)
     sendList.main()
 
@@ -118,12 +117,10 @@ def getScore(person):
 
         return score,parkingPass
 
-
     except Exception as e:
         print("Error: " + str(e))
         if "nonetype" in str(e).lower():
             print("Maybe the text for one of the questions was changed?")
-
 
 def sendEmail(subject,body,reciever):
     msg = MIMEMultipart()
