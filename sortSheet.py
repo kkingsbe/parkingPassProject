@@ -31,7 +31,10 @@ def main():
         for row in range(len(list_of_hashes)):
             if list_of_hashes[row].get("Score") == sortTup[1]:
                 sortedHashes.append(list_of_hashes[row])
+                list_of_hashes.pop(row)
+                break
 
+    print(sortedHashes)
     for row in range(len(sortedHashes)):
         print(sortedHashes[row])
         for col in range(len(sortedHashes[row])):
