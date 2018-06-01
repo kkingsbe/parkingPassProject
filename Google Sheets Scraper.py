@@ -33,7 +33,7 @@ def main():
 
     endDate = DT.datetime.now().timetuple().tm_yday + daysToRun
     '''
-
+    
     '''secondsToRun = daysToRun * 24 * 60 * 60'''
     # thresholdScore = 200 #The lowest score to be able to apply for a parking pass
     secondsToRun = 60 * 5
@@ -76,7 +76,7 @@ def getScore(person):
 
         if person.get("What grade are you currently in?") == "11": #1 point if grade 11
             score += 1
-
+            
         if person.get("What grade are you currently in?") == "12": #2 points if grade 12
             score += 2
 
