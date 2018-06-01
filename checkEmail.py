@@ -61,12 +61,15 @@ def main(EMAIL_ACCOUNT,PASSWORD,EMAIL_FOLDER,M):
         sys.exit(1)
 
     while True:
-        rv, data = M.select(EMAIL_FOLDER)
-        if rv == 'OK':
-            #print("Processing mailbox...\n")
-            process_mailbox(M)
+        try:
+            rv, data = M.select(EMAIL_FOLDER)
+            if rv == 'OK':
+                #print("Processing mailbox...\n")
+                process_mailbox(M)
 
-        else:
-            print("ERROR: Unable to open mailbox ", rv)
+            else:
+                print("ERROR: Unable to open mailbox ", rv)
+        except Exception as e:
+            print(e)
 
         time.sleep(1)

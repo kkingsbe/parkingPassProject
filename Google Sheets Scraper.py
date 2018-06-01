@@ -7,6 +7,10 @@ import datetime as DT
 import time
 addToSheet = __import__("addToSheet")
 sendList = __import__("sendList")
+importInterns = __import__("importInterns")
+importTattler = __import__("importTattler")
+importSGA = __import__("importSGA")
+importCaptains = __import__("importCaptains")
 
 def main():
     print("Program started successfully")
@@ -32,7 +36,7 @@ def main():
 
     '''secondsToRun = daysToRun * 24 * 60 * 60'''
     # thresholdScore = 200 #The lowest score to be able to apply for a parking pass
-    secondsToRun = 60 * 2
+    secondsToRun = 60 * 5
     startTime = time.time()
     endTime = startTime + secondsToRun
     listLen = sendList.getLen()
@@ -61,6 +65,7 @@ def main():
             if "nonetype" in str(e).lower():
                 print("Maybe the text for one of the questions was changed?")
 
+
         time.sleep(1)
     sendList.main()
 
@@ -82,15 +87,19 @@ def getScore(person):
 
         if person.get("Are you an elected SGA official?").lower() == "yes": #100 points if SGA official
             score += 10
+            importSGA.main(person)
 
         if person.get("Are you an editor or reporter for the Tattler?").lower() == "yes": #10 points if Tattler
             score += 10
+            importTattler.main(person)
 
         if person.get("Are you the captain of a varsity team that is CURRENTLY in season?").lower() == "yes": #100 points if varsity captian
             score += 10
+            importCaptains.main(person)
 
         if person.get("Are you currently in B-CC's internship program AND have demonstrated need for a parking pass? (Demonstrated need = internship is located far away and is not easily accessible by public transportation)").lower() == "yes": #30 points if intern
             score += 30
+            importInterns.main(person)
 
         if person.get("Is there currently a school bus route in your neighborhood that you can take to school?").lower() == "no" and int(person.get('If you answered "NO" to the previous question, approximately how long does it typically take you to get to school, in minutes? Please enter a number.')) > 0: #If no bus services the neighborhood
             score += int(person.get('If you answered "NO" to the previous question, approximately how long does it typically take you to get to school, in minutes? Please enter a number.')) / 10
@@ -109,10 +118,12 @@ def getScore(person):
 
         return score,parkingPass
 
+
     except Exception as e:
         print("Error: " + str(e))
         if "nonetype" in str(e).lower():
             print("Maybe the text for one of the questions was changed?")
+
 
 def sendEmail(subject,body,reciever):
     msg = MIMEMultipart()
