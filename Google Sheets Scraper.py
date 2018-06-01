@@ -81,7 +81,7 @@ def getScore(person):
             score += 2
 
         if person.get("Are you in a dual enrollment program at Montgomery College?").lower() == "yes": #100 points if dual enrolled
-            score += 100
+            score += 1000
             parkingPass = True
 
         if person.get("Are you an elected SGA official?").lower() == "yes": #100 points if SGA official
