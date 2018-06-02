@@ -5,6 +5,8 @@ from email.mime.text import MIMEText
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
+getEmail = __import__("getEmailFromFile")
+
 
 def sendEmail(subject,body,reciever):
     msg = MIMEMultipart()
@@ -65,6 +67,6 @@ def main():
         body += "<br />"
 
     body += "</p>"
-    reciever = "kkingsbe@gmail.com" #Email of reciever
+    reciever = getEmail("Kyle") #Change to admin name
 
     sendEmail("Your list of top 75 parking pass applicants is complete",body,reciever)

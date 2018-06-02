@@ -1,5 +1,14 @@
-{
-  "Kyle" : "kkingsbe@gmail.com",
-  "Alana" : "alanafrankel7@gmail.com",
-  "Molly" : "musicmolly1203@gmail.com"
-}
+[
+  {
+    "Name": "Kyle",
+    "Email": "kkingsbe@gmail.com"
+  },
+  {
+    "Name": "Alana",
+    "Email": "alanafrankel7@gmail.com"
+  },
+  {
+    "Name": "Molly",
+    "Email": "musicmolly1203@gmail.com"
+  }
+]
