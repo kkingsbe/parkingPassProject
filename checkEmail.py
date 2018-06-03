@@ -65,7 +65,6 @@ def main(EMAIL_ACCOUNT,PASSWORD,EMAIL_FOLDER,M):
             if rv == 'OK':
                 #print("Processing mailbox...\n")
                 process_mailbox(M)
-                break
 
 
             else:
