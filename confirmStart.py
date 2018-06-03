@@ -5,8 +5,8 @@ getEmail = __import__("getEmailFromFile")
 
 def main():
     subject = "Program Started Successfully"
-    body = "<font size=4>The program has been started successfuly and will be accepting new responses in the google form for the next 5 minutes. Afterwards, an email will be sent an administrator with a list of the top 75 parking pass applicants</font>" #Set this to however long it will run
-    reciever = getEmail("Kyle") #Change to admins name
+    body = "<font size=4>The program has been started successfuly and will be accepting new responses in the google form for the next 3 minutes. Afterwards, an email will be sent an administrator with a list of the top 75 parking pass applicants.</font>" #Set this to however long it will run
+    reciever = getEmail.main("Kyle") #Change to admins name
     sendEmail(reciever,subject,body)
 
 def sendEmail(reciever,subject,body):

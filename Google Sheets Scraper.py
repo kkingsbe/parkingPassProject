@@ -34,7 +34,7 @@ def main():
     secondsToRun = daysToRun * 24 * 60 * 60
     
     # thresholdScore = 200 #The lowest score to be able to apply for a parking pass
-    secondsToRun = 60 * 5
+    secondsToRun = 60 * 3
     startTime = time.time()
     endTime = startTime + secondsToRun
     listLen = sendList.getLen()
