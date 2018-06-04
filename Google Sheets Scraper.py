@@ -2,8 +2,7 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-import smtplib,time
-import datetime as DT
+import smtplib
 import time
 addToSheet = __import__("addToSheet")
 sendList = __import__("sendList")
@@ -34,10 +33,9 @@ def main():
     secondsToRun = daysToRun * 24 * 60 * 60
     
     # thresholdScore = 200 #The lowest score to be able to apply for a parking pass
-    secondsToRun = 60 * 3
+    secondsToRun = 60 * 5
     startTime = time.time()
     endTime = startTime + secondsToRun
-    listLen = sendList.getLen()
 
     while time.time() < endTime:
         try:
@@ -54,7 +52,6 @@ def main():
                         scorePass = getScore(list_of_hashes[x])
                         score = scorePass[0]
                         Pass = scorePass[1]
-                        listLen = sendList.getLen()
                         addPerson(list_of_hashes[x], score, Pass)
 
         except Exception as e:

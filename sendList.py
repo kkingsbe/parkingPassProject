@@ -67,6 +67,7 @@ def main():
         body += "<br />"
 
     body += "</p>"
-    reciever = getEmail("Kyle") #Change to admin name
+    reciever = getEmail.main("Kyle") #Change to admin name
 
     sendEmail("Your list of top 75 parking pass applicants is complete",body,reciever)
+main()
